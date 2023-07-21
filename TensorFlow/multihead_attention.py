@@ -23,17 +23,17 @@ class DotProductAttention(Layer):
 
 # Implementing the Multi-Head Attention
 class MultiHeadAttention(Layer):
-    def __init__(self, h, d_k, d_v, d_model, **kwargs):
+    def __init__(self, h, d_k, d_v, model_dim, **kwargs):
         super().__init__(**kwargs)
         self.attention = DotProductAttention()  # Scaled dot product attention
         self.heads = h  # Number of attention heads to use
         self.d_k = d_k  # Dimensionality of the linearly projected queries and keys
         self.d_v = d_v  # Dimensionality of the linearly projected values
-        self.d_model = d_model  # Dimensionality of the model
+        self.model_dim = model_dim  # Dimensionality of the model
         self.W_q = Dense(d_k)   # Learned projection matrix for the queries
         self.W_k = Dense(d_k)   # Learned projection matrix for the keys
         self.W_v = Dense(d_v)   # Learned projection matrix for the values
-        self.W_o = Dense(d_model) # Learned projection matrix for the multi-head output
+        self.W_o = Dense(model_dim) # Learned projection matrix for the multi-head output
 
     def reshape_tensor(self, x, heads, flag):
         if flag:
@@ -71,5 +71,5 @@ class MultiHeadAttention(Layer):
         # Resulting tensor shape: (batch_size, input_seq_length, d_v)
 
         # Apply one final linear projection to the output to generate the multi-head
-        # attention. Resulting tensor shape: (batch_size, input_seq_length, d_model)
+        # attention. Resulting tensor shape: (batch_size, input_seq_length, model_dim)
         return self.W_o(output)
